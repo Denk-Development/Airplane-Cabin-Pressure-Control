@@ -1,15 +1,16 @@
 #include "Reader.h"
-#include "DisplayController.h"
+#include "Display.h"
 #include "Valve.h"
 
-//#define SERIAL_DEBUG 0
+// #define SERIAL_DEBUG 0
 
 void setup() {
   #ifdef SERIAL_DEBUG
     Serial.begin(9600);
     Serial.println("Starting...");
   #endif
-  DisplayController::init();
+  Display::init();
+  Valve::init();
 }
 
 void loop() {
@@ -20,10 +21,12 @@ void loop() {
   float valveOpening = Valve::getOpening();
 
   #ifndef SERIAL_DEBUG
-    DisplayController::showPressureSelection(targetPsi);
-    DisplayController::showValveOpening(valveOpening);
-    DisplayController::submit();
+    Display::showPressureSelection(targetPsi);
+    Display::showValveOpening(valveOpening);
+    Display::submit();
   #endif
+
+  Valve::setOpening(offPsi);
 
   #ifdef SERIAL_DEBUG
     Serial.print("Off by: ");

@@ -1,5 +1,5 @@
-#ifndef DISPLAY_CONTROLLER_H
-#define DISPLAY_CONTROLLER_H
+#ifndef DISPLAY_H
+#define DISPLAY_H
 
 #include <Arduino.h>
 #include <SPI.h>
@@ -14,7 +14,7 @@ U8G2_SSD1306_128X32_UNIVISION_F_SW_I2C u8g2(U8G2_R0, SCL, SDA, U8X8_PIN_NONE);
 // output string buffer
 char psiString[7];
 
-class DisplayController
+class Display
 {
 public:
     static void init() {
