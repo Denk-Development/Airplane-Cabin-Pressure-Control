@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 
+#define VALVE_MOTOR_REVERSED true
+
 // motor sample code
 // https://www.velleman.eu/support/downloads/?code=VMA03
 
@@ -34,12 +36,31 @@ public:
     };
 
     static void setOpening(float target) {
+        // sets the valve opening target
+        // depending on the current state, the motor will be engaged
+
         target = min(target, 1.);
         target = max(target, 0.);
-        float actual = Valve::getOpening();
+        float actual = getOpening();
 
         float delta = target - actual;
         float absDelta = abs(delta);
+
+        if (actual == target) {
+            stop();
+            return;
+        }
+
+        // for complete opening / closing keep moving
+        // a mechanical solution prevents the motor from taking damage
+        if (target == 0.) {
+            move(true);
+            return;
+        }
+        if (target == 1.) {
+            move(false);
+            return;
+        }
 
         if (moving) {
             if (absDelta < targetTolerance) {
@@ -67,6 +88,7 @@ private:
     };
 
     static void move(bool forward) {
+        forward ^= VALVE_MOTOR_REVERSED;
         moving = true;
         digitalWrite(motorBackwardPin, !forward);
         digitalWrite(motorForwardPin, forward);
