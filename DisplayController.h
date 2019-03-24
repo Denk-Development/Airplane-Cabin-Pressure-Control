@@ -5,8 +5,13 @@
 #include <SPI.h>
 #include <U8g2lib.h>
 
+// reference for the display code
+// https://github.com/olikraus/u8g2/wiki/u8g2reference#drawbox
 
+// initialize display library
 U8G2_SSD1306_128X32_UNIVISION_F_SW_I2C u8g2(U8G2_R0, SCL, SDA, U8X8_PIN_NONE);
+
+// output string buffer
 char psiString[7];
 
 class DisplayController
@@ -34,10 +39,14 @@ public:
 		sprintf(psiString, "%01d.%01d psi", psiDigit, psiDecimal);
 
 		u8g2.drawStr(20, 20, psiString);
+	};
 
-		int width = (int) (psi / 4.5 * 128 + 0.5);
+	static void showValveOpening(float valve) {
+		int width = (int) (valve * 128 + 0.5);
 		u8g2.drawBox(0, 26, width, 6);
+	};
 
+	static void submit() {
 		u8g2.sendBuffer();
 	};
 
