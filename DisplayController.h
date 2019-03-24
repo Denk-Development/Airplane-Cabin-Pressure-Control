@@ -17,38 +17,38 @@ char psiString[7];
 class DisplayController
 {
 public:
-	static void init() {
-		u8g2.begin();
-	};
+    static void init() {
+        u8g2.begin();
+    };
 
-	static void helloWorld() {
-		u8g2.firstPage();
-		do {
-			u8g2.setFont(u8g2_font_helvR14_tr);
-			u8g2.drawStr(0,20,"Hello World!!");
-		} while ( u8g2.nextPage() );
-	};
+    static void helloWorld() {
+        u8g2.firstPage();
+        do {
+            u8g2.setFont(u8g2_font_helvR14_tr);
+            u8g2.drawStr(0,20,"Hello World!!");
+        } while ( u8g2.nextPage() );
+    };
 
-	static void showPressureSelection(float psi) {
-		u8g2.firstPage();
-		u8g2.setFont(u8g2_font_helvR14_tr);
+    static void showPressureSelection(float psi) {
+        u8g2.firstPage();
+        u8g2.setFont(u8g2_font_helvR14_tr);
 
-		int psiDigit = (int) psi;
-		int psiDecimal = (int) (psi * 10) % 10;
+        int psiDigit = (int) psi;
+        int psiDecimal = (int) (psi * 10) % 10;
 
-		sprintf(psiString, "%01d.%01d psi", psiDigit, psiDecimal);
+        sprintf(psiString, "%01d.%01d psi", psiDigit, psiDecimal);
 
-		u8g2.drawStr(20, 20, psiString);
-	};
+        u8g2.drawStr(20, 20, psiString);
+    };
 
-	static void showValveOpening(float valve) {
-		int width = (int) (valve * 128 + 0.5);
-		u8g2.drawBox(0, 26, width, 6);
-	};
+    static void showValveOpening(float valve) {
+        int width = (int) (valve * 128 + 0.5);
+        u8g2.drawBox(0, 26, width, 6);
+    };
 
-	static void submit() {
-		u8g2.sendBuffer();
-	};
+    static void submit() {
+        u8g2.sendBuffer();
+    };
 
 };
 

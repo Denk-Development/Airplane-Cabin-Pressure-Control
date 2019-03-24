@@ -1,5 +1,6 @@
 #include "Reader.h"
 #include "DisplayController.h"
+#include "Valve.h"
 
 //#define SERIAL_DEBUG 0
 
@@ -16,7 +17,7 @@ void loop() {
   float measuredPsi = getPressureMeasuredDelta();
   float offPsi = targetPsi - measuredPsi;
 
-  float valveOpening = getValveOpening();
+  float valveOpening = Valve::getOpening();
 
   #ifndef SERIAL_DEBUG
     DisplayController::showPressureSelection(targetPsi);
