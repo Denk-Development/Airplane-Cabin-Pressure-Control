@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#define VALVE_MOTOR_REVERSED true
+#define VALVE_MOTOR_REVERSED false
 
 // motor sample code
 // https://www.velleman.eu/support/downloads/?code=VMA03
@@ -54,11 +54,11 @@ public:
         // for complete opening / closing keep moving
         // a mechanical solution prevents the motor from taking damage
         if (target == 0.) {
-            move(true);
+            move(false);
             return;
         }
         if (target == 1.) {
-            move(false);
+            move(true);
             return;
         }
 
