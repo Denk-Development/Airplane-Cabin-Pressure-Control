@@ -1,6 +1,7 @@
 #ifndef VALVE_H
 #define VALVE_H
 
+#include "Parameters.h"
 #include <Arduino.h>
 
 #define VALVE_MOTOR_REVERSED false
@@ -11,9 +12,6 @@
 const uint8_t openingPin = A0,
     motorBackwardPin = 6,
     motorForwardPin = 7; 
-
-const float openingTolerance = 0.1;
-const float targetTolerance = openingTolerance / 2;
 
 class Valve
 {

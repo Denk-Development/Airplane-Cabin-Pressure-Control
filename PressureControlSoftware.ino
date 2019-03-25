@@ -1,12 +1,9 @@
+#include "Parameters.h"
 #include "Reader.h"
 #include "Display.h"
 #include "Valve.h"
 
 // #define SERIAL_DEBUG 0
-
-const float minOpening = 0.05, 
-  maxOpeningAtPsiDelta = 1.5,
-  toleratedPsiDelta = 0.1;
 
 void setup() {
   #ifdef SERIAL_DEBUG
@@ -58,9 +55,6 @@ float computeValveOpeningTarget(float targetPsi, float measuredPsi) {
 
 float computeProportional(float delta) {
   delta = max(delta, 0.); // make sure delta is positive
-  
-  float m = (1. - minOpening) / maxOpeningAtPsiDelta;
-  float b = minOpening;
   
   float proportional = m * delta + b;
 
