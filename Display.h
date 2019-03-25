@@ -12,7 +12,7 @@
 U8G2_SSD1306_128X32_UNIVISION_F_SW_I2C u8g2(U8G2_R0, SCL, SDA, U8X8_PIN_NONE);
 
 // output string buffer
-char psiString[7];
+char psiString[13];
 
 class Display
 {
@@ -29,21 +29,26 @@ public:
         } while ( u8g2.nextPage() );
     };
 
-    static void showPressureSelection(float psi) {
+    static void showPressureSelection(float actual, float target) {
         u8g2.firstPage();
         u8g2.setFont(u8g2_font_helvR14_tr);
 
-        int psiDigit = (int) psi;
-        int psiDecimal = (int) (psi * 10) % 10;
+        int actualDigit = (int) actual;
+        int actualDecimal = (int) (actual * 10) % 10;
 
-        sprintf(psiString, "%01d.%01d psi", psiDigit, psiDecimal);
+        int targetDigit = (int) target;
+        int targetDecimal = (int) (target * 10) % 10;
 
-        u8g2.drawStr(20, 20, psiString);
+        sprintf(psiString, "%01d.%01d / %01d.%01d psi", targetDigit, targetDecimal, actualDigit, actualDecimal);
+
+        u8g2.drawStr(10, 20, psiString);
     };
 
-    static void showValveOpening(float valve) {
-        int width = (int) (valve * 128 + 0.5);
-        u8g2.drawBox(0, 26, width, 6);
+    static void showValveOpening(float valve, float valveTarget) {
+        int width = (int) (valve * 128 + .5);
+        u8g2.drawBox(0, 26, width, 4);
+        int targetWidth = (int) (valveTarget * 128 + .5);
+        u8g2.drawBox(0, 30, targetWidth, 2);
     };
 
     static void submit() {

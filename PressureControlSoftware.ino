@@ -24,14 +24,14 @@ void loop() {
 
   float valveOpening = Valve::getOpening();
 
-  #ifndef SERIAL_DEBUG
-    Display::showPressureSelection(targetPsi);
-    Display::showValveOpening(valveOpening);
-    Display::submit();
-  #endif
-
   float valveOpeningTarget = computeValveOpeningTarget(targetPsi, measuredPsi);
   Valve::setOpening(valveOpeningTarget);
+
+  #ifndef SERIAL_DEBUG
+    Display::showPressureSelection(measuredPsi, targetPsi);
+    Display::showValveOpening(valveOpening, valveOpeningTarget);
+    Display::submit();
+  #endif
 
   #ifdef SERIAL_DEBUG
     Serial.print("Off by: ");
