@@ -4,6 +4,10 @@
 
 // #define SERIAL_DEBUG 0
 
+const float minOpening = 0.05, 
+  maxOpeningAtPsiDelta = 1.5,
+  toleratedPsiDelta = 0.1;
+
 void setup() {
   #ifdef SERIAL_DEBUG
     Serial.begin(9600);
@@ -44,10 +48,21 @@ float computeValveOpeningTarget(float targetPsi, float measuredPsi) {
     return 0.;
   }
 
-  if (absDelta > 0.1) {
-    return 0.4;
+  if (absDelta > toleratedPsiDelta) {
+    float proportional = computeProportional(delta);
+    return min(proportional, 1.);
   }
-  else {
-    return 0.;
-  }
+  
+  return 0.;
+}
+
+float computeProportional(float delta) {
+  delta = max(delta, 0.); // make sure delta is positive
+  
+  float m = (1. - minOpening) / maxOpeningAtPsiDelta;
+  float b = minOpening;
+  
+  float proportional = m * delta + b;
+
+  return proportional;
 }
