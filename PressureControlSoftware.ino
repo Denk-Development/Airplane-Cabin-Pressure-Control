@@ -15,26 +15,48 @@ void setup() {
 }
 
 void loop() {
-  float targetPsi = getTargetPressureDelta();
-  float measuredPsi = getPressureMeasuredDelta();
-  float offPsi = targetPsi - measuredPsi;
+  float prevValveTarget = Valve::getOpening();
+  float valveOpeningTarget = prevValveTarget;
+  long valveLastUpdatedMillis = millis();
+  
+  while (true) {
+    long currentMillis = millis();
+    float targetPsi = getTargetPressureDelta();
+    float measuredPsi = getPressureMeasuredDelta();
+    float offPsi = targetPsi - measuredPsi;
+  
+    float valveOpening = Valve::getOpening();
 
-  float valveOpening = Valve::getOpening();
+    if (currentMillis < valveLastUpdatedMillis) {
+      // handle millis overflow case
+      continue;
+    }
+    if (currentMillis - valveLastUpdatedMillis >= 100) {
+      valveLastUpdatedMillis = currentMillis;
+      
+      //float valveOpeningTarget = computeValveOpeningTarget(targetPsi, measuredPsi);
 
-  float valveOpeningTarget = computeValveOpeningTarget(targetPsi, measuredPsi);
-  Valve::setOpening(valveOpeningTarget);
-
-  #ifndef SERIAL_DEBUG
-    Display::showPressureSelection(measuredPsi, targetPsi);
-    Display::showValveOpening(valveOpening, valveOpeningTarget);
-    Display::submit();
-  #endif
-
-  #ifdef SERIAL_DEBUG
-    Serial.print("Off by: ");
-    Serial.print(offPsi, 2);
-    Serial.println(" psi");
-  #endif
+      if (abs(offPsi) > toleratedPsiDelta) {
+        // only update if the tolerated threshold is exceeded
+        valveOpeningTarget = prevValveTarget - offPsi * valveSpeed;
+        valveOpeningTarget = min(1., max(0., valveOpeningTarget));
+        Valve::setOpening(valveOpeningTarget);
+        prevValveTarget = valveOpeningTarget;
+      }
+    }
+    
+    #ifndef SERIAL_DEBUG
+      Display::showPressureSelection(measuredPsi, targetPsi);
+      Display::showValveOpening(valveOpening, valveOpeningTarget);
+      Display::submit();
+    #endif
+  
+    #ifdef SERIAL_DEBUG
+      Serial.print("Off by: ");
+      Serial.print(offPsi, 2);
+      Serial.println(" psi");
+    #endif
+  }
 }
 
 float computeValveOpeningTarget(float targetPsi, float measuredPsi) {

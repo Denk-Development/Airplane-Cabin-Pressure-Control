@@ -1,5 +1,7 @@
 # Pressure Control Software
 
+**Description**. Software for an airplane cabin pressure control system. The airplane motor constantly pumps air into the cabin and a valve controls the flow of cabin air to the outside. It is desired not to have too much pressure relative to the surrounding air to put less stress on the airplane frame. The software controls the valve depending on user input and measured pressure differences.
+
 ## Hardware
 
 This Arduino software was developed by Denk Development in Mar 2019 for the microcontroller Atmega 328P.
@@ -32,8 +34,9 @@ Parameters can be adjusted in the header file `Parameters.h`. Not that instead o
 
 * **Opening tolerance** `openingTolerance`, _Motor-Positions-Toleranz_, permitted value range [0,1]. Controls which deviation of target motor position and actual motor position is still tolerated until a motion is being triggered. If the motor target is e.g. `0.2`, and the measured position is `0.25`, nothing will happen with an `openingTolerance` greater than or equal to `0.05`. The tolerance for motion is derived from this value through division by 2. So while adjusting the motor position, movement will not stop unless half of the `openingTolerance` is reached.
 * **Tolerated PSI delta** `toleratedPsiDelta`, _akzeptierte Differenz von Soll- und Ist-PSI_, permitted value range [0,maxPSI]. After which difference in preassure levels (target vs. actual) a motion is being triggered. Note that there is no tolerance for motion because this is already caught by the motor positioning tolerance.
-* **Minimum valve opening**, `minOpening`, _geringste Öffnung des Ventils_, permitted value range [0,1]. Once a deviation from the target PSI is exceeding `toleratedPsiDelta` the valve will be opened to `minOpening` the least. May be set to `0` when in doubt.
-* **Max opening at PSI delta** `maxOpeningAtPsiDelta`, _Differeny von Soll- und Ist-PSI, bei der das Ventil komplett offen steht_, permitted value range [0,maxPSI). At what PSI difference the valve is openend entirely.
+* **Valve adjustment speed** `valveSpeed`, _Geschwindigkeit der Ventilanpassung_, permitted value range [0, inf). How quickly the valve adjusts do divergence of actual and target pressure. Per 100 ms.
+* [disabled] ~~**Minimum valve opening**, `minOpening`, _geringste Öffnung des Ventils_, permitted value range [0,1]. Once a deviation from the target PSI is exceeding `toleratedPsiDelta` the valve will be opened to `minOpening` the least. May be set to `0` when in doubt.~~
+* [disabled] ~~**Max opening at PSI delta** `maxOpeningAtPsiDelta`, _Differenz von Soll- und Ist-PSI, bei der das Ventil komplett offen steht_, permitted value range [0,maxPSI). At what PSI difference the valve is openend entirely.~~
 
 ## Warranty
 

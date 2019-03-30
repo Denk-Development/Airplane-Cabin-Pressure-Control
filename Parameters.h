@@ -4,11 +4,12 @@
 // motor control
 const float openingTolerance = 0.1;
 
-// P-controller
+// valve controller
 const float toleratedPsiDelta = 0.1;
-const float minOpening = 0.05;
-const float maxOpeningAtPsiDelta = 1.5;
+const float valveSpeed = 0.01;
 
+const float minOpening = 0.05; // disabled
+const float maxOpeningAtPsiDelta = 1.5; // disabled
 
 
 // derived parameters
