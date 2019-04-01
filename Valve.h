@@ -75,14 +75,12 @@ public:
         }
     };
 
-private:
-    static bool moving;
+    static void open() {
+        move(true);
+    };
 
-    static void stop() {
-        moving = false;
-        digitalWrite(motorBackwardPin, HIGH);
-        digitalWrite(motorForwardPin, HIGH);
-
+    static void close() {
+        move(false);
     };
 
     static void move(bool forward) {
@@ -91,6 +89,15 @@ private:
         digitalWrite(motorBackwardPin, !forward);
         digitalWrite(motorForwardPin, forward);
     };
+
+    static void stop() {
+        moving = false;
+        digitalWrite(motorBackwardPin, HIGH);
+        digitalWrite(motorForwardPin, HIGH);
+    };
+
+private:
+    static bool moving;
 };
 
 bool Valve::moving = false;

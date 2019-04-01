@@ -15,39 +15,31 @@ void setup() {
 }
 
 void loop() {
-  float prevValveTarget = Valve::getOpening();
-  float valveOpeningTarget = prevValveTarget;
-  long valveLastUpdatedMillis = millis();
+  unsigned long valveLastUpdatedMillis = millis();
   
   while (true) {
-    long currentMillis = millis();
+    unsigned long currentMillis = millis();
+    if (currentMillis < valveLastUpdatedMillis) {
+      // handle millis overflow case
+      continue;
+    }
+    
     float targetPsi = getTargetPressureDelta();
     float measuredPsi = getPressureMeasuredDelta();
     float offPsi = targetPsi - measuredPsi;
   
     float valveOpening = Valve::getOpening();
 
-    if (currentMillis < valveLastUpdatedMillis) {
-      // handle millis overflow case
-      continue;
+    if (abs(offPsi) > toleratedPsiDelta) {
+      Valve::move(offPsi < 0);  // open or close depending on inequality
     }
-    if (currentMillis - valveLastUpdatedMillis >= 100) {
-      valveLastUpdatedMillis = currentMillis;
-      
-      //float valveOpeningTarget = computeValveOpeningTarget(targetPsi, measuredPsi);
-
-      if (abs(offPsi) > toleratedPsiDelta) {
-        // only update if the tolerated threshold is exceeded
-        valveOpeningTarget = prevValveTarget - offPsi * valveSpeed;
-        valveOpeningTarget = min(1., max(0., valveOpeningTarget));
-        Valve::setOpening(valveOpeningTarget);
-        prevValveTarget = valveOpeningTarget;
-      }
+    else {
+      Valve::stop();
     }
-    
+  
     #ifndef SERIAL_DEBUG
       Display::showPressureSelection(measuredPsi, targetPsi);
-      Display::showValveOpening(valveOpening, valveOpeningTarget);
+      Display::showValveOpening(valveOpening, 0.f);
       Display::submit();
     #endif
   
@@ -57,28 +49,4 @@ void loop() {
       Serial.println(" psi");
     #endif
   }
-}
-
-float computeValveOpeningTarget(float targetPsi, float measuredPsi) {
-  float delta = measuredPsi - targetPsi;
-  float absDelta = abs(delta);
-
-  if (delta < 0) {
-    return 0.;
-  }
-
-  if (absDelta > toleratedPsiDelta) {
-    float proportional = computeProportional(delta);
-    return min(proportional, 1.);
-  }
-  
-  return 0.;
-}
-
-float computeProportional(float delta) {
-  delta = max(delta, 0.); // make sure delta is positive
-  
-  float proportional = m * delta + b;
-
-  return proportional;
 }
