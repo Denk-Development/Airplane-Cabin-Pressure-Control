@@ -11,9 +11,6 @@ void setup()
   // set control pins to be outputs
   pinMode(pwm, OUTPUT);
   pinMode(dir, OUTPUT);
-
-  // set both motors to run at (100/255 = 39)% duty cycle (slow)
-  analogWrite(pwm, 100);
 }
 
 void loop()
