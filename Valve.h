@@ -23,7 +23,7 @@ public:
         pinMode(motorSlowPin, OUTPUT);
         digitalWrite(motorBackwardPin, HIGH);
         digitalWrite(motorForwardPin, HIGH);
-        pinMode(motorSlowPin, LOW);
+        digitalWrite(motorSlowPin, LOW);
         moving = false;
     };
 
