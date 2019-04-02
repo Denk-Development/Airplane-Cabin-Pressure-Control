@@ -29,13 +29,6 @@ void loop() {
     float offPsi = targetPsi - measuredPsi;
   
     float valveOpening = Valve::getOpening();
-
-    if (abs(offPsi) > toleratedPsiDelta) {
-      Valve::move(offPsi < 0);  // open or close depending on inequality
-    }
-    else {
-      Valve::stop();
-    }
   
     #ifndef SERIAL_DEBUG
       Display::showPressureSelection(measuredPsi, targetPsi);
@@ -48,5 +41,18 @@ void loop() {
       Serial.print(offPsi, 2);
       Serial.println(" psi");
     #endif
+
+    // motor movement
+    // stop the motor depending on the motor speed
+    if (currentMillis % 1000 > motorSpeed) {
+      Valve::stop();
+      continue;
+    }
+    if (abs(offPsi) > toleratedPsiDelta) {
+      Valve::move(offPsi < 0);  // open or close depending on inequality
+    }
+    else {
+      Valve::stop();
+    }
   }
 }
