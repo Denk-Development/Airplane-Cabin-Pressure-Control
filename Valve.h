@@ -10,8 +10,9 @@
 // https://www.velleman.eu/support/downloads/?code=VMA03
 
 const uint8_t openingPin = A0,
+    motorSlowPin = 5,
     motorBackwardPin = 6,
-    motorForwardPin = 7; 
+    motorForwardPin = 7;
 
 class Valve
 {
@@ -19,8 +20,10 @@ public:
     static void init() {
         pinMode(motorBackwardPin, OUTPUT);
         pinMode(motorForwardPin, OUTPUT);
+        pinMode(motorSlowPin, OUTPUT);
         digitalWrite(motorBackwardPin, HIGH);
         digitalWrite(motorForwardPin, HIGH);
+        pinMode(motorSlowPin, LOW);
         moving = false;
     };
 
@@ -94,6 +97,10 @@ public:
         moving = false;
         digitalWrite(motorBackwardPin, HIGH);
         digitalWrite(motorForwardPin, HIGH);
+    };
+
+    static void setSlow(bool slow) {
+        digitalWrite(motorSlowPin, slow);
     };
 
 private:

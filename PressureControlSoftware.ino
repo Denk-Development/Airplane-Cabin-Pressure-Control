@@ -12,47 +12,36 @@ void setup() {
   #endif
   Display::init();
   Valve::init();
+  pinMode(13, OUTPUT);
 }
 
 void loop() {
-  unsigned long valveLastUpdatedMillis = millis();
+  digitalWrite(13, !digitalRead(13));  // activity indicator
   
-  while (true) {
-    unsigned long currentMillis = millis();
-    if (currentMillis < valveLastUpdatedMillis) {
-      // handle millis overflow case
-      continue;
-    }
-    
-    float targetPsi = getTargetPressureDelta();
-    float measuredPsi = getPressureMeasuredDelta();
-    float offPsi = targetPsi - measuredPsi;
-  
-    float valveOpening = Valve::getOpening();
-  
-    #ifndef SERIAL_DEBUG
-      Display::showPressureSelection(measuredPsi, targetPsi);
-      Display::showValveOpening(valveOpening, 0.f);
-      Display::submit();
-    #endif
-  
-    #ifdef SERIAL_DEBUG
-      Serial.print("Off by: ");
-      Serial.print(offPsi, 2);
-      Serial.println(" psi");
-    #endif
+  float targetPsi = getTargetPressureDelta();
+  float measuredPsi = getPressureMeasuredDelta();
+  float offPsi = targetPsi - measuredPsi;
 
-    // motor movement
-    // stop the motor depending on the motor speed
-    if (currentMillis % 1000 > motorSpeed) {
-      Valve::stop();
-      continue;
-    }
-    if (abs(offPsi) > toleratedPsiDelta) {
-      Valve::move(offPsi < 0);  // open or close depending on inequality
-    }
-    else {
-      Valve::stop();
-    }
+  float valveOpening = Valve::getOpening();
+
+  #ifndef SERIAL_DEBUG
+    Display::showPressureSelection(measuredPsi, targetPsi);
+    Display::showValveOpening(valveOpening, 0.f);
+    Display::submit();
+  #endif
+
+  #ifdef SERIAL_DEBUG
+    Serial.print("Off by: ");
+    Serial.print(offPsi, 2);
+    Serial.println(" psi");
+  #endif
+
+  // motor movement
+  if (abs(offPsi) > toleratedPsiDelta) {
+    Valve::move(offPsi < 0);  // open or close depending on inequality
   }
+  else {
+    Valve::stop();
+  }
+  Valve::setSlow(abs(offPsi) < lowSpeedPsiDelta); // control speed
 }

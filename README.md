@@ -10,7 +10,7 @@ This Arduino software was developed by Denk Development in Mar 2019 for the micr
 
 _as-is_ + the following
 * Connect a second Arduino to the motor through a motor shield (shield pins 1 and 2, as well as GND and VCC).
-* Connect the Main-Arduino to the Motor-Arduino by hooking up the digital pins 6 <--> 6 and 7 <--> 7, as well as GND <--> GND.
+* Connect the Main-Arduino to the Motor-Arduino by hooking up the digital pins 5 <--> 5, 6 <--> 6, and 7 <--> 7, as well as GND <--> GND.
 
 ## Software Architecture
 
@@ -32,13 +32,20 @@ There are two `.ino` file, one for the Motor-Arduino, one for the Main-Arduino.
 
 Parameters can be adjusted in the header file `Parameters.h`. Not that instead of using a comma `,`, a dot `.` must be used for decimals. Lines are terminated with a semicolon `;`. 
 
-* **Tolerated PSI delta** `toleratedPsiDelta`, _akzeptierte Differenz von Soll- und Ist-PSI_, permitted value range [0,maxPSI]. After which difference in preassure levels (target vs. actual) a motion is being triggered. Note that there is no tolerance for motion because this is already caught by the motor positioning tolerance.
-* **Motor speed** `motorSpeed`, permitted values range (0,1000]. Defines how many milliseconds within one second the motor is permitted to move. When set to 1000, for instance, the motor may more all the time. When set to 200, it will move for (at most) 200 ms and will stay still for the next 800 ms.
+* **Tolerated PSI delta** `toleratedPsiDelta`, _akzeptierte Differenz von Soll- und Ist-PSI_, permitted value range [0, maxPSI]. After which difference in preassure levels (target vs. actual) a motion is being triggered. Note that there is no tolerance for motion because this is already caught by the motor positioning tolerance.
+* **Low speed PSI delta** `lowSpeedPsiDelta`, permitted value range [0, maxPSI]. Threshold after which the motor will turn slower.
+* ~~**Motor speed** `motorSpeed`, permitted values range (0,1000]. Defines how many milliseconds within one second the motor is permitted to move. When set to 1000, for instance, the motor may more all the time. When set to 200, it will move for (at most) 200 ms and will stay still for the next 800 ms.~~
 * [disabled] ~~**Valve adjustment speed** `valveSpeed`, _Geschwindigkeit der Ventilanpassung_, permitted value range [0, inf). How quickly the valve adjusts do divergence of actual and target pressure. Per 100 ms.~~  
   Now controlled through the `MotorController.ino` script or `motorSpeed` variable.
-* [disabled] ~~**Opening tolerance** `openingTolerance`, _Motor-Positions-Toleranz_, permitted value range [0,1]. Controls which deviation of target motor position and actual motor position is still tolerated until a motion is being triggered. If the motor target is e.g. `0.2`, and the measured position is `0.25`, nothing will happen with an `openingTolerance` greater than or equal to `0.05`. The tolerance for motion is derived from this value through division by 2. So while adjusting the motor position, movement will not stop unless half of the `openingTolerance` is reached.~~
+* [disabled] ~~**Opening tolerance** `openingTolerance`, _Motor-Positions-Toleranz_, permitted value range [0, 1]. Controls which deviation of target motor position and actual motor position is still tolerated until a motion is being triggered. If the motor target is e.g. `0.2`, and the measured position is `0.25`, nothing will happen with an `openingTolerance` greater than or equal to `0.05`. The tolerance for motion is derived from this value through division by 2. So while adjusting the motor position, movement will not stop unless half of the `openingTolerance` is reached.~~
 * [disabled] ~~**Minimum valve opening**, `minOpening`, _geringste Öffnung des Ventils_, permitted value range [0,1]. Once a deviation from the target PSI is exceeding `toleratedPsiDelta` the valve will be opened to `minOpening` the least. May be set to `0` when in doubt.~~
 * [disabled] ~~**Max opening at PSI delta** `maxOpeningAtPsiDelta`, _Differenz von Soll- und Ist-PSI, bei der das Ventil komplett offen steht_, permitted value range [0,maxPSI). At what PSI difference the valve is openend entirely.~~
+
+Parameters in `MotorController.ino`
+
+* **Motor slow speed** `slowSpeed`, values in range [0, 1000]. How many milliseconds of a second the motor is turning in slow speed mode.
+* **Motor fast speed** `fastSpeed`, values in range [0, 1000]. How many milliseconds of a second the motor is turning in fast speed mode.
+* **Motor speed** `motorSpeed`, values in range [0, 255]. How fast the motor is actually turning during the movement phases; correlates with motor torque.
 
 ## Warranty
 
